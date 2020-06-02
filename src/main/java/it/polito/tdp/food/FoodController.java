@@ -57,7 +57,8 @@ public class FoodController {
     			
     			this.boxFood.getItems().clear();
     			this.boxFood.getItems().addAll(this.model.getListaBoxCibi(porzioni));
-    			this.txtResult.appendText("Grafo creato!\nNumero vertici del grafo: "+this.model.getNvertex());
+    			this.txtResult.appendText("Grafo creato!\nNumero vertici del grafo: "+this.model.getNvertex()+
+    					"\nNumero archi nel grafo: "+this.model.getNedges());
     		}else {
     			txtResult.appendText("Inserire solo numeri interi maggiori di zero!");
     		}

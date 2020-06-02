@@ -18,11 +18,12 @@ public class Model {
 	private List<Food> listaCibi;
 	
 	public Model() {
-		this.dao = new FoodDao();
+		
 	}
 	
 	public List<Food> getListaBoxCibi(int num) {
 		
+		this.dao = new FoodDao();
 		this.listaCibi = new ArrayList<>(this.dao.listaCibi(num));
 		this.generateGraph();
 		
@@ -33,11 +34,34 @@ public class Model {
 		
 		this.grafo = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
 		Graphs.addAllVertices(this.grafo, this.listaCibi);
+		
+		for(Food food1: this.listaCibi) {
+			for(Food food2: this.listaCibi) {
+				
+				if(!food1.equals(food2) && food1.getFood_code()<food2.getFood_code()) {
+					Double peso = this.dao.getAdiacenza(food1.getFood_code(), food2.getFood_code());
+					if(peso!=null) {
+						Graphs.addEdge(this.grafo, food1, food2, peso);
+					}
+				}
+				
+			}
+		}
+		
+		
+	}
+	
+	public void getElenco5Cibi(Food cibo) {
+		
+		List<Food> cinqueCibi = new ArrayList<>(Graphs.neighborListOf(this.grafo, cibo));
+		
 	}
 	
 	public int getNvertex() {
 		return this.grafo.vertexSet().size();
 	}
 	
-
+	public int getNedges() {
+		return this.grafo.edgeSet().size();
+	}
 }

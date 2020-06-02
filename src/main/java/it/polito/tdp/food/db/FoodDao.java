@@ -1,6 +1,7 @@
 package it.polito.tdp.food.db;
 
 import java.sql.Connection;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -147,4 +148,39 @@ public class FoodDao {
 			return null;
 		}
 	}
+	
+	public Double getAdiacenza(int codiceCibo1, int codiceCibo2) {
+
+		String sql = "SELECT DISTINCT f1.food_code AS c1, food1.display_name AS n1, f2.food_code AS c2, food2.display_name AS n2, (SUM(c.condiment_calories)/COUNT(DISTINCT f1.condiment_code)) AS media " + 
+				"FROM food_condiment AS f1, food_condiment AS f2, condiment AS c, food AS food1, food AS food2 " + 
+				"WHERE f1.food_code= ? AND f2.food_code = ? AND f1.condiment_code=f2.condiment_code " + 
+				"AND c.condiment_code=f1.condiment_code AND food1.food_code=f1.food_code AND food2.food_code=f2.food_code";
+		
+		Double a = null;
+		try {
+			Connection conn = DBConnect.getConnection();
+			PreparedStatement st = conn.prepareStatement(sql);
+			st.setInt(1, codiceCibo1);
+			st.setInt(2, codiceCibo2);
+			ResultSet res = st.executeQuery();
+
+			while (res.next()) {
+				try {
+					
+					a = res.getDouble("media");
+
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+
+			conn.close();
+			return a;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 }
