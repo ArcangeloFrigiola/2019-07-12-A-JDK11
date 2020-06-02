@@ -1,5 +1,10 @@
 package it.polito.tdp.food.db;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import it.polito.tdp.food.model.Food;
+
 public class TestDao {
 
 	public static void main(String[] args) {
@@ -13,6 +18,8 @@ public class TestDao {
 		
 		System.out.println("Printing all the portions...");
 		System.out.println(dao.listAllPortions());
+		
+	
 	}
 
 }

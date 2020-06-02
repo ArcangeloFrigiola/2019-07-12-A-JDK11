@@ -5,7 +5,9 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import it.polito.tdp.food.model.Condiment;
 import it.polito.tdp.food.model.Food;
@@ -108,5 +110,41 @@ public class FoodDao {
 			return null ;
 		}
 
+	}
+	
+	public List<Food> listaCibi(int porzioni){
+		
+		String sql = "SELECT fo.food_code AS fcode, fo.display_name AS fname, COUNT(DISTINCT po.portion_id) AS num " + 
+				"FROM `portion` AS po, food AS fo " + 
+				"WHERE fo.food_code=po.food_code " + 
+				"GROUP BY fo.food_code "+
+				"HAVING num=? "+
+				"ORDER BY fo.display_name";
+		
+		List<Food> listaCibi = new ArrayList<>();
+		
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, porzioni);
+			ResultSet res = st.executeQuery() ;
+			
+			while(res.next()) {
+				try {
+					
+					listaCibi.add(new Food(res.getInt("fcode"), res.getString("fname")));
+					
+				} catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			
+			conn.close();
+			return listaCibi;
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }
