@@ -1,8 +1,12 @@
 package it.polito.tdp.food.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -40,7 +44,7 @@ public class Model {
 				
 				if(!food1.equals(food2) && food1.getFood_code()<food2.getFood_code()) {
 					Double peso = this.dao.getAdiacenza(food1.getFood_code(), food2.getFood_code());
-					if(peso!=null) {
+					if(peso>0) {
 						Graphs.addEdge(this.grafo, food1, food2, peso);
 					}
 				}
@@ -51,9 +55,35 @@ public class Model {
 		
 	}
 	
-	public void getElenco5Cibi(Food cibo) {
+	public String getElenco5Cibi(Food cibo) {
 		
-		List<Food> cinqueCibi = new ArrayList<>(Graphs.neighborListOf(this.grafo, cibo));
+		List<Food> cibiVicini = new ArrayList<>(Graphs.neighborListOf(this.grafo, cibo));
+		List<FoodAndCalories> listaTemp = new ArrayList<>();
+		
+		for(Food f: cibiVicini) {
+			
+			listaTemp.add(new FoodAndCalories(f, this.grafo.getEdgeWeight(this.grafo.getEdge(cibo, f))));
+		}
+		
+		Collections.sort(listaTemp, new ComparatoreCalorie());
+		String result = "";
+		
+		if(listaTemp.size()>0) {
+			
+			if(listaTemp.size()>4) {
+				result = "Top 5 cibi adiacenti a "+cibo.getDisplay_name()+":\n";
+			}else{
+				result = "Top "+(listaTemp.size()+1)+" cibi adiacenti a "+cibo.getDisplay_name()+":\n";
+			}
+			
+			for(int i=0; i<listaTemp.size() && i<5; i++) {
+				result+=listaTemp.get(i).getCibo().getDisplay_name()+", calorie: "+listaTemp.get(i).getCalorieCongiunte()+"\n";
+			}
+		}else {
+			result+="Nessun cibo adiacente a quello selezionato!\n";
+		}
+		
+		return result;
 		
 	}
 	

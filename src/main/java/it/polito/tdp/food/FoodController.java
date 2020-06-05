@@ -73,7 +73,16 @@ public class FoodController {
     @FXML
     void doCalorie(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Analisi calorie...");
+    	Food cibo = this.boxFood.getValue();
+    	
+    	if(cibo!=null) {
+    		
+    		txtResult.appendText(this.model.getElenco5Cibi(cibo));
+    		
+    	}else {
+    		txtResult.appendText("Inserire un cibo dal menù a tendina!");
+    		return;
+    	}
     }
 
     @FXML
