@@ -1,12 +1,11 @@
 package it.polito.tdp.food.model;
 
 import java.util.ArrayList;
+
 import java.util.Collections;
-import java.util.HashMap;
+
 import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
+
 
 import org.jgrapht.Graph;
 import org.jgrapht.Graphs;
@@ -55,9 +54,9 @@ public class Model {
 		
 	}
 	
-	public String getElenco5Cibi(Food cibo) {
+	public List<FoodAndCalories> getElenco5Cibi(Food cibo) {
 		
-		List<Food> cibiVicini = new ArrayList<>(Graphs.neighborListOf(this.grafo, cibo));
+		List<Food> cibiVicini = Graphs.neighborListOf(this.grafo, cibo);
 		List<FoodAndCalories> listaTemp = new ArrayList<>();
 		
 		for(Food f: cibiVicini) {
@@ -66,25 +65,22 @@ public class Model {
 		}
 		
 		Collections.sort(listaTemp, new ComparatoreCalorie());
-		String result = "";
 		
-		if(listaTemp.size()>0) {
-			
-			if(listaTemp.size()>4) {
-				result = "Top 5 cibi adiacenti a "+cibo.getDisplay_name()+":\n";
-			}else{
-				result = "Top "+(listaTemp.size()+1)+" cibi adiacenti a "+cibo.getDisplay_name()+":\n";
-			}
-			
-			for(int i=0; i<listaTemp.size() && i<5; i++) {
-				result+=listaTemp.get(i).getCibo().getDisplay_name()+", calorie: "+listaTemp.get(i).getCalorieCongiunte()+"\n";
-			}
-		}else {
-			result+="Nessun cibo adiacente a quello selezionato!\n";
-		}
 		
-		return result;
+		return listaTemp;
 		
+	}
+	
+	public String simula(Food cibo, int k) {
+		
+		Simulator sim = new Simulator(this.grafo, this);
+		String mex = "";
+		sim.setK(k);
+		sim.initialize(cibo);
+		sim.run();
+		
+		mex += "#Cibi preparati: "+sim.getCibiPreparati()+"\nTempo totale di preparazione: "+sim.getTempoDiPreparazione()+" minuti";
+		return mex;
 	}
 	
 	public int getNvertex() {

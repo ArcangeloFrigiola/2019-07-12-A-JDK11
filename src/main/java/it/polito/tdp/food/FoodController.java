@@ -5,9 +5,12 @@
 package it.polito.tdp.food;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 import it.polito.tdp.food.model.Food;
+import it.polito.tdp.food.model.FoodAndCalories;
 import it.polito.tdp.food.model.Model;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -75,9 +78,27 @@ public class FoodController {
     	txtResult.clear();
     	Food cibo = this.boxFood.getValue();
     	
+    	
     	if(cibo!=null) {
     		
-    		txtResult.appendText(this.model.getElenco5Cibi(cibo));
+    		String result = "";
+    		List<FoodAndCalories> listaTemp = new ArrayList<>(this.model.getElenco5Cibi(cibo));
+    		if(listaTemp.size()>0) {
+    			
+    			if(listaTemp.size()>4) {
+    				result = "Top 5 cibi adiacenti a "+cibo.getDisplay_name()+":\n";
+    			}else{
+    				result = "Top "+(listaTemp.size()+1)+" cibi adiacenti a "+cibo.getDisplay_name()+":\n";
+    			}
+    			
+    			for(int i=0; i<listaTemp.size() && i<5; i++) {
+    				result+=listaTemp.get(i).getCibo().getDisplay_name()+", calorie: "+listaTemp.get(i).getCalorieCongiunte()+"\n";
+    			}
+    			
+    			txtResult.appendText(result);
+    		}else {
+    			result+="Nessun cibo adiacente a quello selezionato!\n";
+    		}
     		
     	}else {
     		txtResult.appendText("Inserire un cibo dal menù a tendina!");
@@ -88,7 +109,29 @@ public class FoodController {
     @FXML
     void doSimula(ActionEvent event) {
     	txtResult.clear();
-    	txtResult.appendText("Simulazione...");
+    	
+    	Food cibo = this.boxFood.getValue();
+    	int k = 0;
+    	
+    	if(cibo==null) {
+    		txtResult.appendText("Inserire un cibo dal menù a tendina!");
+    		return;
+    	}
+    	
+    	try {
+    		
+    		k = Integer.parseInt(this.txtK.getText());
+    		if(k<0 || k>10) {
+    			txtResult.appendText("Inserire un numero K maggiore di zero e minore di 10!");
+        		return;
+    		}
+    		
+    	}catch(NumberFormatException e) {
+    		txtResult.appendText("Inserire un numero K!");
+    		return;
+    	}
+    	
+    	this.txtResult.appendText(this.model.simula(cibo, k));
     }
 
     @FXML // This method is called by the FXMLLoader when initialization is complete

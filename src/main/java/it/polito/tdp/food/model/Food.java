@@ -4,10 +4,19 @@ public class Food {
 	private Integer food_code;
 	private String display_name;
 	
+	public enum StatoPreparazione{
+		DA_PREPARARE,
+		IN_CORSO,
+		PREPARATO
+	}
+	
+	private StatoPreparazione preparazione;
+	
 	public Food(Integer food_code, String display_name) {
 		super();
 		this.food_code = food_code;
 		this.display_name = display_name;
+		this.setPreparato(StatoPreparazione.DA_PREPARARE);
 	}
 	
 	public Integer getFood_code() {
@@ -51,6 +60,15 @@ public class Food {
 	@Override
 	public String toString() {
 		return display_name;
+	}
+
+	public void setPreparato(StatoPreparazione preparazione) {
+		this.preparazione = preparazione;
+	}
+
+	public StatoPreparazione getPreprazione() {
+		// TODO Auto-generated method stub
+		return this.preparazione;
 	}
 
 	
